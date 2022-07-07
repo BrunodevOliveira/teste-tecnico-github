@@ -1,4 +1,5 @@
 import User from "../models/User"
+import { createPasswordHash } from "../services/auth"
 
 class UsersController {
   async index(req, res) {
@@ -27,7 +28,10 @@ class UsersController {
         return res.status(422).json({ message: `User ${email} already exists.` })
       }
 
-      const newUser = await User.create({ email, password })
+      // Criptografa password
+      const encryptedPassword = await createPasswordHash(password)
+
+      const newUser = await User.create({ email, password: encryptedPassword })
 
       return res.status(201).json(newUser)
 
